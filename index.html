@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Finary Export CSV</title>
+  <style>
+    * {
+      font-family: sans-serif;
+    }
+
+    body {
+      width: 600px;
+      margin: auto;
+      background-color: black;
+      color: white;
+      font-family: "Arial";
+      line-height: 1.1em;
+    }
+
+    a {
+      color: #CFA370;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .install-button {
+      display: inline-block;
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #4CAF50;
+      color: #fff;
+      border-radius: 4px;
+      text-decoration: none;
+      cursor: pointer;
+      margin-top: 30px;
+    }
+
+    .install-button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Bookmarklet : Export CSV Finary</h1>
+
+  <p>
+    Ceci est un bookmarklet pour télécharger vos données Finary au format CSV.
+    Glissez déposez le bouton ci dessous dans votre barre de favoris / marque pages.
+    Puis, visitez <a href="https://app.finary.com">app.finary.com</a> et cliquez sur le bouton dans votre barre.
+    Le fichier CSV est automatiquement ajouté à vos téléchargements.
+  </p>
+
+  <p>
+    This bookmarklet is a tiny program that lives inside a browser bookmark.
+    Drag the following button to your bookmarks bar.
+    And like a bookmark, click it when you are on <a href="https://app.finary.com">app.finary.com</a>.
+    It will download all your Finary data in a CSV file on your computer.
+  </p>
+
+  <p>
+    <a class="bookmarklet install-button">💰 Finary CSV</a>
+  </p>
+
+  <script class="load-script-function" type="text">
+  function(url) {
+    var script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.src = url;
+    script.async = true;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(script, s);
+  }
+</script>
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+
+  <script>
+
+
+    // While not strictly necessary, having to deal with the page served as a file
+    // complicates the implementation past the point of it being worth it.
+    if (location.protocol === 'file:') {
+      var message = 'You can not run this as a file:// url. Please use a web server.';
+      alert(message);
+      throw new Error(message);
+    }
+
+    function makeBookmarklet($bookmarkletAnchor, bookmarkletFilename) {
+      // this assumes the js file is in the same folder as this file
+      var bookmarkletLocation = window.location.href.match(/.*\//)[0];
+
+      var url = bookmarkletLocation + bookmarkletFilename;
+
+      // get loadScript function and remove extra spaces
+      var loadScriptSrc = $('.load-script-function').html().replace(/\s\s+/g, ' ');
+
+      // warn users who try to click the bookmarklet unless in debug mode
+      $bookmarkletAnchor.click(function () {
+        if (DEBUG) {
+          return;
+        }
+        alert('To install, drag bookmarklet to your bookmarks bar.');
+        return false;
+      });
+
+      var template = 'javascript:({fn}("{url}?{rnd}"));';
+      $bookmarkletAnchor.attr('href', template
+        .replace('{fn}', loadScriptSrc)
+        .replace('{url}', url)
+        .replace('{rnd}', Math.random())); // cache bust
+    }
+
+    $(function () {
+      makeBookmarklet($('.bookmarklet'), 'bookmarklet.js');
+    });
+  </script>
+</body>
+
+</html>
